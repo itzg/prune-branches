@@ -1,5 +1,7 @@
 package me.itzg.app;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -19,11 +21,17 @@ import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactory;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactoryBuilder;
 import org.eclipse.jgit.util.FS;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.ExitCode;
 import picocli.CommandLine.Option;
 
 @Slf4j
+@Command(
+    description = "Prunes local branches that no longer point to existing remote branches",
+    mixinStandardHelpOptions = true
+)
 public class PruneCommand implements Callable<Integer> {
 
   public static void main(String[] args) {
@@ -33,7 +41,7 @@ public class PruneCommand implements Callable<Integer> {
   }
 
   @Option(names = "--always-keep", paramLabel = "BRANCH", defaultValue = "master",
-    description = "The names of branches always keep from pruning, such as master"
+    description = "The names of branches to keep from pruning, such as master"
   )
   List<String> keepBranchNames;
 
@@ -41,6 +49,12 @@ public class PruneCommand implements Callable<Integer> {
     description = "When set, untracked branches will be pruned even if git thinks they are not merged to master"
   )
   boolean forceDelete;
+
+  @SuppressWarnings("unused")
+  @Option(names = "--debug", description = "Enable debug logs")
+  void setDebug(boolean value) {
+    ((Logger) LoggerFactory.getLogger("me.itzg.app")).setLevel(value ? Level.DEBUG : Level.INFO);
+  }
 
   @Override
   public Integer call() {

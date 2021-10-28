@@ -8,7 +8,7 @@
     </encoder>
   </appender>
 
-  <logger name="me.itzg" level="debug"/>
+  <logger name="me.itzg.app" level="info"/>
   <logger name="org.apache.sshd" level="warn"/>
 
   <root level="info">
