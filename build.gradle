@@ -2,10 +2,14 @@ plugins {
     id 'java'
     id 'application'
     id "io.freefair.lombok" version "6.2.0"
+    // For managing incrementing of project.version and tagging
+    // https://github.com/netzwerg/gradle-release-plugin
+    id 'ch.netzwerg.release' version '1.2.3'
+    // https://jreleaser.org/guide/latest/index.html
+    id 'org.jreleaser' version '0.7.0'
 }
 
 group 'me.itzg'
-version '1.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -21,6 +25,67 @@ application {
 
 tasks.distTar {
     compression = Compression.GZIP
+}
+
+// For bumping version.txt and tagging with ch.netzwerg.release
+release {
+    push = project.findProperty("pushReleaseTag") ?: false
+}
+
+jreleaser {
+    project {
+        website = 'https://github.com/itzg/prune-branches'
+        docsUrl = 'https://github.com/itzg/prune-branches'
+        authors = ['Geoff Bourne']
+        tags = ['cli']
+        license = 'MIT'
+        extraProperties.put('inceptionYear', '2021')
+    }
+    release {
+        github {
+            //noinspection GroovyAccessibility
+            owner = 'itzg'
+            prerelease {
+                pattern = '.*-SNAPSHOT'
+            }
+            changelog {
+                labeler {
+                    label = 'ci'
+                    title = '^ci:'
+                }
+                labeler {
+                    label = 'test'
+                    title = '^test'
+                }
+                category {
+                    title = 'Internal'
+                    labels = ['ci', 'test']
+                }
+                hide {
+                    categories = ['Internal']
+                }
+            }
+        }
+    }
+    packagers {
+        scoop {
+            active = 'RELEASE'
+            bucket {
+                owner = 'itzg'
+                name = 'scoop-bucket'
+            }
+        }
+/* This block currently fails with
+   Cannot set the value of read-only property 'owner' for root project 'prune-branches' of type org.gradle.api.Project
+        brew {
+            active = 'RELEASE'
+            tap {
+                owner = 'itzg'
+                name = 'homebrew-tap'
+            }
+        }
+*/
+    }
 }
 
 dependencies {
