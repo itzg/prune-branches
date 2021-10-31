@@ -6,7 +6,7 @@ plugins {
     // https://github.com/netzwerg/gradle-release-plugin
     id 'ch.netzwerg.release' version '1.2.3'
     // https://jreleaser.org/guide/latest/index.html
-    id 'org.jreleaser' version '0.7.0'
+    id 'org.jreleaser' version '0.8.0'
 }
 
 group 'me.itzg'
@@ -57,7 +57,7 @@ jreleaser {
                 }
                 labeler {
                     label = 'test'
-                    title = '^test'
+                    title = 'test:'
                 }
                 category {
                     title = 'Internal'
@@ -72,21 +72,14 @@ jreleaser {
     packagers {
         scoop {
             active = 'RELEASE'
-            bucket {
-                owner = 'itzg'
-                name = 'scoop-bucket'
-            }
+            bucket.owner = 'itzg'
+            bucket.name = 'scoop-bucket'
         }
-/* This block currently fails with
-   Cannot set the value of read-only property 'owner' for root project 'prune-branches' of type org.gradle.api.Project
         brew {
             active = 'RELEASE'
-            tap {
-                owner = 'itzg'
-                name = 'homebrew-tap'
-            }
+            tap.owner = 'itzg'
+            tap.name = 'homebrew-tap'
         }
-*/
     }
 }
 
