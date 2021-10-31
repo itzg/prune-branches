@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'me.itzg'
-description 'CLI tool that prunes local branches that no longer point to existing remote branches'
+description 'Prunes local git branches without remote branch'
 
 repositories {
     mavenCentral()
