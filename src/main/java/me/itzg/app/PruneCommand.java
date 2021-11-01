@@ -14,9 +14,11 @@ import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NotMergedException;
 import org.eclipse.jgit.lib.BranchConfig;
+import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.SshSessionFactory;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactory;
 import org.eclipse.jgit.transport.sshd.SshdSessionFactoryBuilder;
@@ -50,6 +52,12 @@ public class PruneCommand implements Callable<Integer> {
   )
   boolean forceDelete;
 
+  @Option(names = "--ssh-directory",
+    description = "Location of .ssh directory that contains ssh private key file."
+        + " Default is ~/.ssh"
+  )
+  File sshDirectory;
+
   @SuppressWarnings("unused")
   @Option(names = "--debug", description = "Enable debug logs")
   void setDebug(boolean value) {
@@ -68,14 +76,21 @@ public class PruneCommand implements Callable<Integer> {
       }
 
       final File homeDirectory = FS.detect().userHome();
+      if (sshDirectory == null) {
+        sshDirectory = new File(homeDirectory, ".ssh");
+      }
+      log.debug("Using {} for ssh directory", sshDirectory);
+
       final SshdSessionFactory sessionFactory = new SshdSessionFactoryBuilder()
           .setHomeDirectory(homeDirectory)
-          .setSshDirectory(new File(homeDirectory, ".ssh"))
+          .setSshDirectory(sshDirectory)
           .build(null);
       SshSessionFactory.setInstance(sessionFactory);
 
       try (Git git = new Git(repo)) {
-        prune(repo, git);
+        CredentialsProvider credentialsProvider =
+            loadCredentialProvider(git);
+        prune(repo, git, credentialsProvider);
         return ExitCode.OK;
       }
     } catch (IOException | GitAPIException e) {
@@ -84,12 +99,23 @@ public class PruneCommand implements Callable<Integer> {
     }
   }
 
-  private void prune(Repository repo, Git git) throws GitAPIException {
+  private CredentialsProvider loadCredentialProvider(Git git) {
+    final String helper = git.getRepository().getConfig()
+        .getString("credential", null, "helper");
+    if (helper != null) {
+      return new CredentialHelperProvider(helper);
+    }
+    return null;
+  }
+
+  private void prune(Repository repo, Git git,
+      CredentialsProvider credentialsProvider) throws GitAPIException {
     final Set<String> remoteRefNames = new HashSet<>();
 
     for (String remoteName : repo.getRemoteNames()) {
       log.debug("Fetching remote {}", remoteName);
       git.fetch()
+          .setCredentialsProvider(credentialsProvider)
           .setRemote(remoteName)
           .setRemoveDeletedRefs(true)
           .call();
@@ -101,6 +127,7 @@ public class PruneCommand implements Callable<Integer> {
       }
     }
 
+    int keepCount = 0;
     final List<Ref> branches = git.branchList().call();
     for (Ref branch : branches) {
       final String localBranchName = Repository.shortenRefName(branch.getName());
@@ -129,8 +156,11 @@ public class PruneCommand implements Callable<Integer> {
         }
       } else {
         log.debug("Keeping local branch {}", localBranchName);
+        ++keepCount;
       }
     }
+
+    log.info("Kept {} branch{}", keepCount, keepCount == 1 ? "":"es");
   }
 
 }
