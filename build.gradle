@@ -51,20 +51,25 @@ jreleaser {
                 pattern = '.*-SNAPSHOT'
             }
             changelog {
+                formatted = 'ALWAYS'
+                preset = 'conventional-commits'
                 labeler {
-                    label = 'ci'
-                    title = '^ci:'
+                    label = 'release'
+                    title = '^Prepare next release '
                 }
                 labeler {
-                    label = 'test'
-                    title = 'test:'
+                    label = 'release'
+                    title = '^Release '
                 }
                 category {
                     title = 'Internal'
-                    labels = ['ci', 'test']
+                    labels = ['release']
                 }
                 hide {
                     categories = ['Internal']
+                }
+                contributors {
+                    format = '- {{contributorName}}'
                 }
             }
         }
