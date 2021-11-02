@@ -25,7 +25,7 @@ public class CredentialHelperProvider extends CredentialsProvider {
 
   @Override
   public boolean isInteractive() {
-    return false;
+    return true;
   }
 
   @Override
