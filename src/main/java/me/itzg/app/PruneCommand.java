@@ -58,6 +58,11 @@ public class PruneCommand implements Callable<Integer> {
   )
   File sshDirectory;
 
+  @Option(names = "--dry-run",
+    description = "Just output branches that would have been deleted"
+  )
+  boolean dryRun;
+
   @SuppressWarnings("unused")
   @Option(names = "--debug", description = "Enable debug logs")
   void setDebug(boolean value) {
@@ -146,13 +151,15 @@ public class PruneCommand implements Callable<Integer> {
 
         log.info("Deleting local branch {}", localBranchName);
 
-        try {
-          git.branchDelete()
-              .setBranchNames(branch.getName())
-              .setForce(forceDelete)
-              .call();
-        } catch (NotMergedException e) {
-          log.warn("Failed to delete branch '{}' since it has not been merged yet", localBranchName);
+        if (!dryRun) {
+          try {
+            git.branchDelete()
+                .setBranchNames(branch.getName())
+                .setForce(forceDelete)
+                .call();
+          } catch (NotMergedException e) {
+            log.warn("Failed to delete branch '{}' since it has not been merged yet", localBranchName);
+          }
         }
       } else {
         log.debug("Keeping local branch {}", localBranchName);
