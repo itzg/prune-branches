@@ -1,5 +1,9 @@
 A simple CLI to prune local git branches that reference a remote branch that no longer exists.
 
+## Usage
+
+Run `prune-branches --help` to see the full set of options; however, typically you can go into the repo directory to prune and simply run it with no options.
+
 ## Installation
 
 > All of the following require Java 8 or newer to be installed.
