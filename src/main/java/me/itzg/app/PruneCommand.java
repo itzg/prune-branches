@@ -14,7 +14,6 @@ import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NotMergedException;
 import org.eclipse.jgit.lib.BranchConfig;
-import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -43,7 +42,8 @@ public class PruneCommand implements Callable<Integer> {
   }
 
   @Option(names = "--always-keep", paramLabel = "BRANCH", defaultValue = "master",
-    description = "The names of branches to keep from pruning, such as master"
+    description = "The names of branches to keep from pruning, such as master."
+        + " The current branch is always kept regardless of this option."
   )
   List<String> keepBranchNames;
 
@@ -74,11 +74,6 @@ public class PruneCommand implements Callable<Integer> {
     try (Repository repo = new FileRepositoryBuilder()
         .setWorkTree(new File("."))
         .build()) {
-
-      if (!"master".equals(repo.getBranch())) {
-        log.error("Current branch must be master");
-        System.exit(1);
-      }
 
       final File homeDirectory = FS.detect().userHome();
       if (sshDirectory == null) {
@@ -114,29 +109,17 @@ public class PruneCommand implements Callable<Integer> {
   }
 
   private void prune(Repository repo, Git git,
-      CredentialsProvider credentialsProvider) throws GitAPIException {
-    final Set<String> remoteRefNames = new HashSet<>();
+      CredentialsProvider credentialsProvider) throws GitAPIException, IOException {
+    final String currentBranchName = git.getRepository().getBranch();
 
-    for (String remoteName : repo.getRemoteNames()) {
-      log.debug("Fetching remote {}", remoteName);
-      git.fetch()
-          .setCredentialsProvider(credentialsProvider)
-          .setRemote(remoteName)
-          .setRemoveDeletedRefs(true)
-          .call();
-
-      for (Ref remoteRef : git.branchList()
-          .setListMode(ListMode.REMOTE)
-          .call()) {
-        remoteRefNames.add(remoteRef.getName());
-      }
-    }
+    final Set<String> remoteRefNames = fetchRemotRefNames(repo, git, credentialsProvider);
 
     int keepCount = 0;
     final List<Ref> branches = git.branchList().call();
     for (Ref branch : branches) {
       final String localBranchName = Repository.shortenRefName(branch.getName());
-      if (keepBranchNames.contains(localBranchName)) {
+      if (currentBranchName.equals(localBranchName)
+          || keepBranchNames.contains(localBranchName)) {
         continue;
       }
 
@@ -168,6 +151,27 @@ public class PruneCommand implements Callable<Integer> {
     }
 
     log.info("Kept {} branch{}", keepCount, keepCount == 1 ? "":"es");
+  }
+
+  private Set<String> fetchRemotRefNames(Repository repo, Git git, CredentialsProvider credentialsProvider)
+      throws GitAPIException {
+    final Set<String> remoteRefNames = new HashSet<>();
+
+    for (String remoteName : repo.getRemoteNames()) {
+      log.debug("Fetching remote {}", remoteName);
+      git.fetch()
+          .setCredentialsProvider(credentialsProvider)
+          .setRemote(remoteName)
+          .setRemoveDeletedRefs(true)
+          .call();
+
+      for (Ref remoteRef : git.branchList()
+          .setListMode(ListMode.REMOTE)
+          .call()) {
+        remoteRefNames.add(remoteRef.getName());
+      }
+    }
+    return remoteRefNames;
   }
 
 }
