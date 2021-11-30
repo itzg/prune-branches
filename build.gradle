@@ -55,6 +55,7 @@ jreleaser {
     release {
         github {
             owner = 'itzg'
+            branch = 'master'
             prerelease {
                 pattern = '.*-SNAPSHOT'
             }
