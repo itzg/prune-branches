@@ -47,6 +47,9 @@ jreleaser {
         app {
             artifacts {
                 artifact {
+                    path = "build/distributions/{{projectName}}-{{projectVersion}}.tgz"
+                }
+                artifact {
                     path = "build/distributions/{{projectName}}-{{projectVersion}}.zip"
                 }
             }
