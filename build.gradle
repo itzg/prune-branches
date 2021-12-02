@@ -45,13 +45,11 @@ jreleaser {
     }
     distributions {
         app {
-            artifacts {
-                artifact {
-                    path = "build/distributions/{{projectName}}-{{projectVersion}}.tgz"
-                }
-                artifact {
-                    path = "build/distributions/{{projectName}}-{{projectVersion}}.zip"
-                }
+            artifact {
+                path = "build/distributions/{{projectName}}-{{projectVersion}}.tgz"
+            }
+            artifact {
+                path = "build/distributions/{{projectName}}-{{projectVersion}}.zip"
             }
         }
     }
