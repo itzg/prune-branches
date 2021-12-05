@@ -44,7 +44,7 @@ jreleaser {
         extraProperties.put('inceptionYear', '2021')
     }
     distributions {
-        app {
+        'prune-branches' {
             artifact {
                 path = "build/distributions/{{projectName}}-{{projectVersion}}.tgz"
             }
