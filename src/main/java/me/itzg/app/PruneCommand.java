@@ -71,6 +71,8 @@ public class PruneCommand implements Callable<Integer> {
 
   @Override
   public Integer call() {
+    discoverSystemConfig();
+
     try (Repository repo = new FileRepositoryBuilder()
         .setWorkTree(new File("."))
         .build()) {
@@ -96,6 +98,14 @@ public class PruneCommand implements Callable<Integer> {
     } catch (IOException | GitAPIException e) {
       log.warn("Failed to process current repository", e);
       return ExitCode.SOFTWARE;
+    }
+  }
+
+  private void discoverSystemConfig() {
+    final File osxSystemConfig = new File("/Library/Developer/CommandLineTools/usr/share/git-core/gitconfig");
+
+    if (osxSystemConfig.exists()) {
+      FS.DETECTED.setGitSystemConfig(osxSystemConfig);
     }
   }
 
