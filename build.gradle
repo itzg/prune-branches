@@ -3,15 +3,25 @@ plugins {
     id 'application'
     // https://plugins.gradle.org/plugin/io.freefair.lombok
     id 'io.freefair.lombok' version '6.3.0'
-    // For managing incrementing of project.version and tagging
-    // https://github.com/netzwerg/gradle-release-plugin
-    id 'ch.netzwerg.release' version '1.2.3'
     // https://jreleaser.org/guide/latest/index.html
     id 'org.jreleaser' version '0.9.1'
+    // https://github.com/qoomon/gradle-git-versioning-plugin
+    id 'me.qoomon.git-versioning' version '5.1.1'
 }
 
 group 'me.itzg'
 description 'Prunes local git branches without remote branch'
+
+gitVersioning.apply {
+    refs {
+        branch('.+') {
+            version = '${ref}-SNAPSHOT'
+        }
+        tag('v(?<version>.*)') {
+            version = '${ref.version}'
+        }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -27,11 +37,6 @@ application {
 
 tasks.distTar {
     compression = Compression.GZIP
-}
-
-// For bumping version.txt and tagging with ch.netzwerg.release
-release {
-    push = project.findProperty("pushReleaseTag") ?: false
 }
 
 jreleaser {
