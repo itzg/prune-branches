@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.NotMergedException;
 import org.eclipse.jgit.lib.BranchConfig;
 import org.eclipse.jgit.lib.Ref;
@@ -122,7 +123,7 @@ public class PruneCommand implements Callable<Integer> {
       CredentialsProvider credentialsProvider) throws GitAPIException, IOException {
     final String currentBranchName = git.getRepository().getBranch();
 
-    final Set<String> remoteRefNames = fetchRemotRefNames(repo, git, credentialsProvider);
+    final Set<String> remoteRefNames = fetchRemoteRefNames(repo, git, credentialsProvider);
 
     int keepCount = 0;
     final List<Ref> branches = git.branchList().call();
@@ -163,17 +164,22 @@ public class PruneCommand implements Callable<Integer> {
     log.info("Kept {} branch{}", keepCount, keepCount == 1 ? "":"es");
   }
 
-  private Set<String> fetchRemotRefNames(Repository repo, Git git, CredentialsProvider credentialsProvider)
+  private Set<String> fetchRemoteRefNames(Repository repo, Git git, CredentialsProvider credentialsProvider)
       throws GitAPIException {
     final Set<String> remoteRefNames = new HashSet<>();
 
     for (String remoteName : repo.getRemoteNames()) {
       log.debug("Fetching remote {}", remoteName);
-      git.fetch()
-          .setCredentialsProvider(credentialsProvider)
-          .setRemote(remoteName)
-          .setRemoveDeletedRefs(true)
-          .call();
+      try {
+        git.fetch()
+            .setCredentialsProvider(credentialsProvider)
+            .setRemote(remoteName)
+            .setRemoveDeletedRefs(true)
+            .call();
+      } catch (InvalidRemoteException e) {
+        log.warn("Remote {} is not valid, considering it removed", remoteName);
+        continue;
+      }
 
       for (Ref remoteRef : git.branchList()
           .setListMode(ListMode.REMOTE)
