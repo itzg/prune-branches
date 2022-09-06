@@ -1,0 +1,9 @@
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.kohsuke:github-api:1.308'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'org.json:json:20220320'
+}

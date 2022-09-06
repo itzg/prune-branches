@@ -1,17 +1,20 @@
+import io.github.itzg.ghrel.GithubReleaserPlugin
+
 plugins {
     id 'java'
     id 'application'
     // https://plugins.gradle.org/plugin/io.freefair.lombok
     id 'io.freefair.lombok' version '6.3.0'
-    // https://jreleaser.org/guide/latest/index.html
-    id 'org.jreleaser' version '0.9.1'
     // https://github.com/qoomon/gradle-git-versioning-plugin
-    id 'me.qoomon.git-versioning' version '5.1.1'
+    id 'me.qoomon.git-versioning' version '6.3.0'
 }
+
+apply plugin: GithubReleaserPlugin
 
 group 'me.itzg'
 description 'Prunes local git branches without remote branch'
 
+version = '0.0.0-SNAPSHOT'
 gitVersioning.apply {
     refs {
         branch('.+') {
@@ -21,14 +24,17 @@ gitVersioning.apply {
             version = '${ref.version}'
         }
     }
+    rev {
+        version = '${commit}'
+    }
 }
 
 repositories {
     mavenCentral()
 }
 
-compileJava {
-    options.release = 8
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
 application {
@@ -39,76 +45,8 @@ tasks.distTar {
     compression = Compression.GZIP
 }
 
-jreleaser {
-    project {
-        website = 'https://github.com/itzg/prune-branches'
-        docsUrl = 'https://github.com/itzg/prune-branches'
-        authors = ['Geoff Bourne']
-        tags = ['cli']
-        license = 'MIT'
-        extraProperties.put('inceptionYear', '2021')
-    }
-    distributions {
-        'prune-branches' {
-            artifact {
-                path = "build/distributions/{{projectName}}-{{projectVersion}}.tgz"
-            }
-            artifact {
-                path = "build/distributions/{{projectName}}-{{projectVersion}}.zip"
-            }
-        }
-    }
-    release {
-        github {
-            owner = 'itzg'
-            branch = 'master'
-            prerelease {
-                pattern = '.*-SNAPSHOT'
-            }
-            changelog {
-                formatted = 'ALWAYS'
-                preset = 'conventional-commits'
-                labeler {
-                    label = 'release'
-                    title = '^Prepare next release '
-                }
-                labeler {
-                    label = 'release'
-                    title = '^Release '
-                }
-                category {
-                    title = 'Internal'
-                    labels = ['release']
-                }
-                hide {
-                    categories = ['Internal']
-                }
-                contributors {
-                    format = '- {{contributorName}}'
-                }
-            }
-        }
-    }
-    packagers {
-        scoop {
-            active = 'RELEASE'
-            bucket {
-                owner = 'itzg'
-                name = 'scoop-bucket'
-            }
-        }
-        brew {
-            active = 'RELEASE'
-            repoTap {
-                owner = 'itzg'
-                name = 'homebrew-tap'
-            }
-        }
-    }
-}
-
 dependencies {
-    implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:6.0.0.202111291000-r'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:6.2.0.202206071550-r'
     implementation 'info.picocli:picocli:4.6.3'
     implementation 'ch.qos.logback:logback-classic:1.2.11'
     implementation 'org.slf4j:slf4j-api:1.7.36'
@@ -121,4 +59,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+githubReleaser {
+    publish {
+        scoop {
+            repository = 'itzg/test-github-releaser-plugin'
+        }
+    }
 }

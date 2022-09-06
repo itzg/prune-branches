@@ -3,7 +3,7 @@ name: publish release
 on:
   push:
     tags:
-      - v[0-9]+.[0-9]+.[0-9]+
+      - [0-9]+.[0-9]+.[0-9]+
   workflow_dispatch:
 
 jobs:
@@ -20,24 +20,12 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Test
-      run: ./gradlew test
-
-    - name: Release
-      run: ./gradlew jreleaserFullRelease
+    - name: Gradle build
+      uses: gradle/gradle-build-action@v2
       env:
-        JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        JRELEASER_SCOOP_GITHUB_TOKEN: ${{ secrets.PUSH_ACCESS_GITHUB_TOKEN }}
-        JRELEASER_HOMEBREW_GITHUB_TOKEN: ${{ secrets.PUSH_ACCESS_GITHUB_TOKEN }}
-
-    - name: Archive jreleaser trace log
-      uses: actions/upload-artifact@v3
-      if: failure()    # run this step even if previous step failed
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_PUBLISH_TOKEN: ${{ secrets.PUSH_ACCESS_GITHUB_TOKEN }}
       with:
-        name: jrelease-trace-log
-        path: build/jreleaser/trace.log
+        arguments: |
+          test githubPublishApplication
