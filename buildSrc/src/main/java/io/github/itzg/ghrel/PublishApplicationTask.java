@@ -65,7 +65,8 @@ public abstract class PublishApplicationTask extends DefaultTask {
         try {
             repo = gitHub.getRepository(scoopBucketRepo);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to locate scoop bucket repository "+ scoopBucketRepo, e);
+            throw new RuntimeException(
+                String.format("Failed accessing scoop bucket repository %s: %s", scoopBucketRepo, e.getMessage()), e);
         }
 
         final String name = getApplicationName().get();
