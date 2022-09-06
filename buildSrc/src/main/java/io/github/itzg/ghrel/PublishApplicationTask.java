@@ -61,10 +61,11 @@ public abstract class PublishApplicationTask extends DefaultTask {
         final ScoopProperties scoopProps = publishProps.getScoop();
 
         final GHRepository repo;
+        final String scoopBucketRepo = scoopProps.getRepository().get();
         try {
-            repo = gitHub.getRepository(scoopProps.getRepository().get());
+            repo = gitHub.getRepository(scoopBucketRepo);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to locate scoop bucket repository", e);
+            throw new RuntimeException("Failed to locate scoop bucket repository "+ scoopBucketRepo, e);
         }
 
         final String name = getApplicationName().get();

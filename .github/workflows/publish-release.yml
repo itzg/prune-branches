@@ -29,4 +29,6 @@ jobs:
         GITHUB_PUBLISH_TOKEN: ${{ secrets.PUSH_ACCESS_GITHUB_TOKEN }}
       with:
         arguments: |
-          test githubPublishApplication
+          test 
+          githubPublishApplication 
+          --stacktrace

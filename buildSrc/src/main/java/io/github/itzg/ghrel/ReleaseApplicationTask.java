@@ -132,7 +132,7 @@ abstract class ReleaseApplicationTask extends DefaultTask {
 
         getLogger().info("Uploading asset {}", filename);
         final GHAsset archiveAsset = release.uploadAsset(file, mimeType);
-        release.uploadAsset(filename+".txt", new ByteArrayInputStream(sha256.getBytes(StandardCharsets.UTF_8)), "text/plain");
+        release.uploadAsset(filename+".sha256", new ByteArrayInputStream(sha256.getBytes(StandardCharsets.UTF_8)), "text/plain");
 
         return new Asset(archiveAsset.getBrowserDownloadUrl(), sha256);
     }
