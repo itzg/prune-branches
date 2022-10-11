@@ -1,4 +1,4 @@
-A simple CLI to prune local git branches that reference a remote branch that no longer exists.
+A simple CLI to prune local git branches that have been merged via merge-commit or squash-and-merge.
 
 ## Usage
 
@@ -6,7 +6,7 @@ Run `prune-branches --help` to see the full set of options; however, typically y
 
 ## Installation
 
-> All of the following require Java 8 or newer to be installed.
+> All the installation methods require Java 8 or newer to be installed.
 
 ### Scoop
 
