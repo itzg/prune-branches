@@ -62,6 +62,10 @@ test {
 }
 
 githubReleaser {
+    project {
+        license = 'MIT'
+        homepage = 'https://github.com/itzg/prune-branches'
+    }
     publish {
         scoop {
             repository = 'itzg/test-github-releaser-plugin'
