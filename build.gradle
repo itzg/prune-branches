@@ -66,5 +66,8 @@ githubReleaser {
         scoop {
             repository = 'itzg/test-github-releaser-plugin'
         }
+        homebrew {
+            repository = 'itzg/test-github-releaser-plugin'
+        }
     }
 }
