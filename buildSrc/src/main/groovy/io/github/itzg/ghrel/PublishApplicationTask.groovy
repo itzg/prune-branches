@@ -67,17 +67,16 @@ abstract class PublishApplicationTask extends DefaultTask {
         final String contentPath = bucketDirectory != null ? "${bucketDirectory}/${name}.json" : "${name}.json"
         final Asset zipFile = assets.get().zipFile;
         final String version = applicationVersion.get();
-        def contentBuilder = new JsonBuilder()
-        contentBuilder {
-            version: version
-            url: zipFile.downloadUrl
-            hash: "sha256:${zipFile.sha256}"
-            bin: "bin/${name}.bat"
-            extract_dir: zipTopDirectory.get()
-            suggest: {
-                JRE: ['java/temurin-lts-jre']
-            }
-        }
+        def contentBuilder = new JsonBuilder([
+            'version': version,
+            'url': zipFile.downloadUrl,
+            'hash': "sha256:${zipFile.sha256}",
+            'bin': "bin/${name}.bat",
+            'extract_dir': zipTopDirectory.get(),
+            'suggest': [
+                'JRE': ['java/temurin-lts-jre']
+            ]
+        ])
 
         pushFileToRepo(
             gitHub, scoopProps.repository, scoopProps.branch, 'Scoop bucket',
