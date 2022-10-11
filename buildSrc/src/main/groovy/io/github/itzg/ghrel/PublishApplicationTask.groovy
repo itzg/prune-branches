@@ -139,7 +139,7 @@ end
                 .sha(existingContent != null ? existingContent.sha : null)
                 .content(content)
                 .path(contentPath)
-                .message("github-releaser: ${applicationName.get()} ${applicationVersion.get()}")
+                .message("${applicationName.get()}: released ${applicationVersion.get()}")
                 .commit();
         } catch (IOException e) {
             throw new RuntimeException("Publishing manifest update", e);
