@@ -66,12 +66,4 @@ githubReleaser {
         license = 'MIT'
         homepage = 'https://github.com/itzg/prune-branches'
     }
-    publish {
-        scoop {
-            repository = 'itzg/test-github-releaser-plugin'
-        }
-        homebrew {
-            repository = 'itzg/test-github-releaser-plugin'
-        }
-    }
 }

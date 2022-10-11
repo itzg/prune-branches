@@ -27,8 +27,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PUBLISH_TOKEN: ${{ secrets.PUSH_ACCESS_GITHUB_TOKEN }}
+        SCOOP_BUCKET_REPO: itzg/scoop-bucket
+        HOMEBREW_TAP_REPO: itzg/homebrew-tap
       with:
         arguments: |
           test 
-          githubPublishApplication 
-          --stacktrace
+          githubPublishApplication
