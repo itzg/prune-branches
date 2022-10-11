@@ -143,9 +143,8 @@ public class PruneCommand implements Callable<Integer> {
       if (remoteBranch == null ||
           !remoteRefNames.contains(remoteBranch)) {
 
-        log.info("Deleting local branch {}", localBranchName);
-
         if (!dryRun) {
+          log.info("Deleting local branch {}", localBranchName);
           try {
             git.branchDelete()
                 .setBranchNames(branch.getName())
@@ -154,6 +153,9 @@ public class PruneCommand implements Callable<Integer> {
           } catch (NotMergedException e) {
             log.warn("Failed to delete branch '{}' since it has not been merged yet", localBranchName);
           }
+        }
+        else {
+          log.info("Would have deleted local branch {}", localBranchName);
         }
       } else {
         log.debug("Keeping local branch {}", localBranchName);
