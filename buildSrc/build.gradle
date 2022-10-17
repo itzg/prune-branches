@@ -5,5 +5,5 @@ repositories {
 dependencies {
     implementation 'org.kohsuke:github-api:1.313'
     implementation 'commons-codec:commons-codec:1.15'
-    implementation 'org.apache.commons:commons-text:1.9'
+    implementation 'org.apache.commons:commons-text:1.10.0'
 }
