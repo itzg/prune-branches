@@ -9,7 +9,7 @@ on:
 
 jobs:
   publish:
-    uses: itzg/github-workflows/.github/workflows/gradle-build.yml
+    uses: itzg/github-workflows/.github/workflows/gradle-build.yml@main
     with:
       arguments: >
         test 
