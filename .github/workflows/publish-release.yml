@@ -1,4 +1,4 @@
-name: publish release
+name: Release and publish
 
 on:
   push:
@@ -8,28 +8,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-20.04
-
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Setup Java JDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
-    - name: Gradle build
-      uses: gradle/gradle-build-action@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_PUBLISH_TOKEN: ${{ secrets.PUSH_ACCESS_GITHUB_TOKEN }}
-        SCOOP_BUCKET_REPO: itzg/scoop-bucket
-        HOMEBREW_TAP_REPO: itzg/homebrew-tap
-      with:
-        arguments: |
-          test 
-          githubPublishApplication
+  publish:
+    uses: itzg/github-workflows/.github/workflows/gradle-build.yml@main
+    with:
+      arguments: >
+        test 
+        githubPublishApplication
+      scoop-bucket-repo: itzg/scoop-bucket
+      homebrew-tap-repo: itzg/homebrew-tap
+    secrets:
+      GITHUB_PUBLISH_TOKEN: ${{ secrets.PUSH_ACCESS_GITHUB_TOKEN }}
