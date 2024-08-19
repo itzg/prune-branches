@@ -6,7 +6,7 @@ plugins {
     // https://plugins.gradle.org/plugin/io.freefair.lombok
     id 'io.freefair.lombok' version '8.7.1'
     // https://github.com/qoomon/gradle-git-versioning-plugin
-    id 'me.qoomon.git-versioning' version '6.4.3'
+    id 'me.qoomon.git-versioning' version '6.4.4'
     id 'io.github.itzg.github-releaser' version '0.1.1'
 }
 
@@ -49,7 +49,7 @@ tasks.distTar {
 dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:6.10.0.202406032230-r'
     implementation 'info.picocli:picocli:4.7.6'
-    implementation 'ch.qos.logback:logback-classic:1.5.6'
+    implementation 'ch.qos.logback:logback-classic:1.5.7'
     implementation 'org.slf4j:slf4j-api:2.0.16'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
