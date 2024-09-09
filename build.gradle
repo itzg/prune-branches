@@ -49,7 +49,7 @@ tasks.distTar {
 dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:6.10.0.202406032230-r'
     implementation 'info.picocli:picocli:4.7.6'
-    implementation 'ch.qos.logback:logback-classic:1.5.7'
+    implementation 'ch.qos.logback:logback-classic:1.5.8'
     implementation 'org.slf4j:slf4j-api:2.0.16'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.0'
