@@ -4,7 +4,7 @@ plugins {
     id 'java'
     id 'application'
     // https://plugins.gradle.org/plugin/io.freefair.lombok
-    id 'io.freefair.lombok' version '8.10'
+    id 'io.freefair.lombok' version '8.10.2'
     // https://github.com/qoomon/gradle-git-versioning-plugin
     id 'me.qoomon.git-versioning' version '6.4.4'
     id 'io.github.itzg.github-releaser' version '0.1.1'
@@ -52,8 +52,8 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.5.8'
     implementation 'org.slf4j:slf4j-api:2.0.16'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.2'
 
     annotationProcessor 'info.picocli:picocli-codegen:4.7.6'
 }
