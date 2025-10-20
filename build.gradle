@@ -45,7 +45,7 @@ tasks.distTar {
 dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:7.4.0.202509020913-r'
     implementation 'info.picocli:picocli:4.7.7'
-    implementation 'ch.qos.logback:logback-classic:1.5.19'
+    implementation 'ch.qos.logback:logback-classic:1.5.20'
     implementation 'org.slf4j:slf4j-api:2.0.17'
 
     // https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle-bom
