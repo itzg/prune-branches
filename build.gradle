@@ -45,11 +45,11 @@ tasks.distTar {
 dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit.ssh.apache:7.5.0.202512021534-r'
     implementation 'info.picocli:picocli:4.7.7'
-    implementation 'ch.qos.logback:logback-classic:1.5.23'
+    implementation 'ch.qos.logback:logback-classic:1.5.24'
     implementation 'org.slf4j:slf4j-api:2.0.17'
 
     // https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle-bom
-    testImplementation(platform("org.junit:junit-bom:6.0.1"))
+    testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
